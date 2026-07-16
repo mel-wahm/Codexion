@@ -2,7 +2,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -pthread
 NAME = codexion
 
-SRC = utils.c parser.c
+SRC = utils.c parser.c data.c
 
 OBJS = $(SRC:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/04 01:02:58 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/14 16:21:21 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/16 18:51:52 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,17 @@
 int	main(int argc, char **argv)
 {
 	t_config	conf;
-	int			config_valid;
+	int			valid;
 
-	config_valid = full_checker(argc, argv, &conf);
-	return (config_valid);
+	valid = full_checker(argc, argv, &conf);
+	if (valid)
+		return (valid);
+	valid = initialize_data(&conf);
+	if (valid)
+		return (valid);
+	free(conf.coders);
+	free(conf.dongles);
+	pthread_mutex_t p;
+	pthread_mutex_init(&p, NULL);
+	return (0);
 }

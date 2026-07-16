@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/10 22:01:49 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/14 16:20:43 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/16 11:40:01 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,21 +40,21 @@ void	ft_perror(int i)
 		printf("Error: dongle cooldown should not be negative.\n");
 }
 
-int	config_validator(t_config conf)
+int	config_validator(t_config *conf)
 {
-	if (conf.number_of_coders < 1)
+	if (conf->number_of_coders < 1)
 		return (6);
-	if (conf.time_to_burnout < 1)
+	if (conf->time_to_burnout < 1)
 		return (7);
-	if (conf.time_to_compile < 1)
+	if (conf->time_to_compile < 1)
 		return (8);
-	if (conf.time_to_debug < 1)
+	if (conf->time_to_debug < 1)
 		return (9);
-	if (conf.time_to_refactor < 1)
+	if (conf->time_to_refactor < 1)
 		return (10);
-	if (conf.number_of_compiles_required < 1)
+	if (conf->number_of_compiles_required < 1)
 		return (11);
-	if (conf.dongle_cooldown < 0)
+	if (conf->dongle_cooldown < 0)
 		return (12);
 	return (0);
 }
@@ -78,7 +78,7 @@ int	full_checker(int argc, char **argv, t_config *conf)
 	parser_valid = parser(argc, argv, conf);
 	if (parser_valid)
 		return (ft_perror(parser_valid), parser_valid);
-	config_valid = config_validator(*conf);
+	config_valid = config_validator(conf);
 	if (config_valid)
 		return (ft_perror(config_valid), config_valid);
 	return (0);
