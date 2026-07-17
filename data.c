@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 14:45:56 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/16 18:51:14 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/17 10:39:38 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,7 @@ static	void	init_coders(t_config *conf)
 	{
 		tmp.id = i + 1;
 		tmp.left_dongle = i;
-		if (i != n - 1)
-			tmp.right_dongle = i + 1;
-		else
-			tmp.right_dongle = 0;
+		tmp.right_dongle = (i + 1) % n;
 		tmp.compile_count = 0;
 		tmp.last_compile_time = 0;
 		tmp.conf = conf;
@@ -48,23 +45,30 @@ static	void	init_coders(t_config *conf)
 	}
 }
 
-static	void	init_dongles(t_config *conf)
+static	int	init_dongles(t_config *conf)
 {
 	t_dongle	tmp;
 	int			i;
-	int			n;
+	int			mtx;
 
 	i = 0;
-	n = conf->number_of_coders;
-	while (i < n)
+	while (i < conf->number_of_coders)
 	{
 		tmp.id = i;
 		tmp.is_available = 1;
 		tmp.time_of_last_released = 0;
 		conf->dongles[i] = tmp;
-		pthread_mutex_init(&conf->dongles[i].available_mutex, NULL);
+		mtx = pthread_mutex_init(&conf->dongles[i].available_mutex, NULL);
+		if (mtx)
+		{
+			mtx = 0;
+			while (mtx < i)
+				pthread_mutex_destroy(&conf->dongles[mtx++].available_mutex);
+			return (13);
+		}
 		i++;
 	}
+	return (0);
 }
 
 int	initialize_data(t_config *conf)
@@ -73,8 +77,12 @@ int	initialize_data(t_config *conf)
 
 	valid = allocate_memory(conf);
 	if (valid)
-		return (printf("Allocation Error!"), valid);
+		return (printf("Allocation Error!\n"), valid);
 	init_coders(conf);
-	init_dongles(conf);
+	valid = init_dongles(conf);
+	if (valid)
+		return (printf("Mutex creation failed!\n"), valid);
+	pthread_mutex_init(&conf->end_mutex, NULL);
+	pthread_mutex_init(&conf->print_mutex, NULL);
 	return (0);
 }

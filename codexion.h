@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/11 11:30:41 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/16 18:49:37 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/17 09:27:02 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,5 +63,6 @@ int		initialize_data(t_config *conf);
 int		full_checker(int argc, char **argv, t_config *conf);
 int		ft_atoi(const char *str, int *result);
 void	ft_perror(int i);
+int		run_simulation(t_config *conf);
 
 #endif
