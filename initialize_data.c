@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   data.c                                             :+:      :+:    :+:   */
+/*   initialize_data.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 14:45:56 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/17 10:39:38 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/19 17:04:35 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static	int	allocate_memory(t_config *conf)
 	conf->coders = malloc(n * sizeof(t_coder));
 	conf->dongles = malloc(n * sizeof(t_dongle));
 	if (!conf->coders || !conf->dongles)
-		return (12);
+		return (16);
 	return (0);
 }
 
@@ -64,7 +64,7 @@ static	int	init_dongles(t_config *conf)
 			mtx = 0;
 			while (mtx < i)
 				pthread_mutex_destroy(&conf->dongles[mtx++].available_mutex);
-			return (13);
+			return (1);
 		}
 		i++;
 	}
@@ -75,14 +75,18 @@ int	initialize_data(t_config *conf)
 {
 	int	valid;
 
+	valid = pthread_mutex_init(&conf->print_mutex, NULL);
+	if (valid)
+		return 21;
+	valid = pthread_mutex_init(&conf->end_mutex, NULL);
+	if (valid)
+		return 21;
 	valid = allocate_memory(conf);
 	if (valid)
-		return (printf("Allocation Error!\n"), valid);
+		return (valid);
 	init_coders(conf);
 	valid = init_dongles(conf);
 	if (valid)
-		return (printf("Mutex creation failed!\n"), valid);
-	pthread_mutex_init(&conf->end_mutex, NULL);
-	pthread_mutex_init(&conf->print_mutex, NULL);
+		return (22);
 	return (0);
 }

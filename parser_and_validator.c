@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   parser_and_validator.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/10 22:01:49 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/16 11:40:01 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/21 21:10:09 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,29 +15,37 @@
 void	ft_perror(int i)
 {
 	if (i == 1)
-		printf("Error: expected exactly 8 arguments.\n");
+		fprintf(stderr, "Error: expected exactly 8 arguments.\n");
 	else if (i == 2)
-		printf("Error: argument must not be empty.\n");
+		fprintf(stderr, "Error: argument must not be empty.\n");
 	else if (i == 3)
-		printf("Error: integer overflow.\n");
+		fprintf(stderr, "Error: integer overflow.\n");
 	else if (i == 4)
-		printf("Error: invalid argument.\n");
+		fprintf(stderr, "Error: invalid argument.\n");
 	else if (i == 5)
-		printf("Error: Schedular must be 'edf' or 'fifo'.\n");
+		fprintf(stderr, "Error: Scheduler must be 'edf' or 'fifo'.\n");
 	else if (i == 6)
-		printf("Error: number of coders should be greater than 0.\n");
+		fprintf(stderr, "Error: number of coders should be greater than 0.\n");
 	else if (i == 7)
-		printf("Error: time to burnout should be greater than 0.\n");
+		fprintf(stderr, "Error: time to burnout should be greater than 0.\n");
 	else if (i == 8)
-		printf("Error: time to compile should be greater than 0.\n");
+		fprintf(stderr, "Error: time to compile should be greater than 0.\n");
 	else if (i == 9)
-		printf("Error: time to debug should be greater than 0.\n");
+		fprintf(stderr, "Error: time to debug should be greater than 0.\n");
 	else if (i == 10)
-		printf("Error: time to refactor should be greater than 0.\n");
+		fprintf(stderr, "Error: time to refactor should be greater than 0.\n");
 	else if (i == 11)
-		printf("Error: number of compiles required should be greater than 0.\n");
+		fprintf(stderr, "Error: number of compiles required should be greater than 0.\n");
 	else if (i == 12)
-		printf("Error: dongle cooldown should not be negative.\n");
+		fprintf(stderr, "Error: dongle cooldown should not be negative.\n");
+	else if (i == 14)
+		fprintf(stderr, "Error: Too many coders, couldnt create all threads.\n");
+	else if (i == 21)
+		fprintf(stderr, "Error: Initializing global mutexes failed.\n");
+	else if (i == 18)
+		fprintf(stderr, "Error: Max number of coders exceeded (3000).\n");
+	else if(i == 16)
+		fprintf(stderr, "Allocation Error!\n");
 }
 
 int	config_validator(t_config *conf)
@@ -56,6 +64,8 @@ int	config_validator(t_config *conf)
 		return (11);
 	if (conf->dongle_cooldown < 0)
 		return (12);
+	// if (conf->number_of_coders > 3000)
+		// return (18);
 	return (0);
 }
 
@@ -72,15 +82,15 @@ static void	fill_targets(int **targets, t_config *conf)
 
 int	full_checker(int argc, char **argv, t_config *conf)
 {
-	int	parser_valid;	
-	int	config_valid;	
+	int	parser_valid;
+	int	config_valid;
 
 	parser_valid = parser(argc, argv, conf);
 	if (parser_valid)
-		return (ft_perror(parser_valid), parser_valid);
+		return (parser_valid);
 	config_valid = config_validator(conf);
 	if (config_valid)
-		return (ft_perror(config_valid), config_valid);
+		return (config_valid);
 	return (0);
 }
 
@@ -92,6 +102,7 @@ int	parser(int argc, char **argv, t_config *conf)
 
 	i = 0;
 	if (argc != 9)
+		// return (1if (argc != 9)
 		return (1);
 	fill_targets(targets, conf);
 	while (++i < 8)

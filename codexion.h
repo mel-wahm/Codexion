@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/11 11:30:41 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/17 09:27:02 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/21 22:12:40 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdio.h>
 # include <string.h>
 # include <pthread.h>
+# include <sys/time.h>
 
 typedef struct s_config	t_config;
 
@@ -33,7 +34,7 @@ typedef struct s_coder
 	int			id;
 	int			last_compile_time;
 	int			compile_count;
-	int			right_dongle;	
+	int			right_dongle;
 	int			left_dongle;
 	t_config	*conf;
 	pthread_t	thread;
@@ -64,5 +65,6 @@ int		full_checker(int argc, char **argv, t_config *conf);
 int		ft_atoi(const char *str, int *result);
 void	ft_perror(int i);
 int		run_simulation(t_config *conf);
+void	clean_data(t_config *conf);
 
 #endif

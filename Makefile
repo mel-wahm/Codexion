@@ -1,8 +1,8 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread
+CFLAGS = -pthread
 NAME = codexion
 
-SRC = utils.c parser.c data.c main.c coders.c
+SRC = utils.c parser_and_validator.c initialize_data.c main.c simulation.c cleanup.c
 
 OBJS = $(SRC:.c=.o)
 
@@ -19,6 +19,6 @@ fclean: clean
 
 re: fclean all
 
-makeit:	all clean
+it:	all clean
 
 .PHONY: all clean fclean re
