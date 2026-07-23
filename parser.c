@@ -1,16 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser_and_validator.c                             :+:      :+:    :+:   */
+/*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/10 22:01:49 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/21 21:10:09 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/23 03:01:59 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
+
+static void	ft_perror_part2(int i)
+{
+	if (i == 9)
+		fprintf(stderr, "Error: time to debug should be greater than 0.\n");
+	else if (i == 10)
+		fprintf(stderr, "Error: time to refactor should be greater than 0.\n");
+	else if (i == 11)
+		fprintf(stderr,
+			"Error: number of compiles required should be greater than 0.\n");
+	else if (i == 12)
+		fprintf(stderr, "Error: dongle cooldown should not be negative.\n");
+	else if (i == 14)
+		fprintf(stderr, "Error: Too many coders, couldnt create all threads.\n");
+	else if (i == 18)
+		fprintf(stderr, "Error: Max number of coders exceeded (3000).\n");
+	else if (i == 21)
+		fprintf(stderr, "Error: Initializing global mutexes failed.\n");
+	else if (i == 16)
+		fprintf(stderr, "Allocation Error!\n");
+}
 
 void	ft_perror(int i)
 {
@@ -30,43 +51,8 @@ void	ft_perror(int i)
 		fprintf(stderr, "Error: time to burnout should be greater than 0.\n");
 	else if (i == 8)
 		fprintf(stderr, "Error: time to compile should be greater than 0.\n");
-	else if (i == 9)
-		fprintf(stderr, "Error: time to debug should be greater than 0.\n");
-	else if (i == 10)
-		fprintf(stderr, "Error: time to refactor should be greater than 0.\n");
-	else if (i == 11)
-		fprintf(stderr, "Error: number of compiles required should be greater than 0.\n");
-	else if (i == 12)
-		fprintf(stderr, "Error: dongle cooldown should not be negative.\n");
-	else if (i == 14)
-		fprintf(stderr, "Error: Too many coders, couldnt create all threads.\n");
-	else if (i == 21)
-		fprintf(stderr, "Error: Initializing global mutexes failed.\n");
-	else if (i == 18)
-		fprintf(stderr, "Error: Max number of coders exceeded (3000).\n");
-	else if(i == 16)
-		fprintf(stderr, "Allocation Error!\n");
-}
-
-int	config_validator(t_config *conf)
-{
-	if (conf->number_of_coders < 1)
-		return (6);
-	if (conf->time_to_burnout < 1)
-		return (7);
-	if (conf->time_to_compile < 1)
-		return (8);
-	if (conf->time_to_debug < 1)
-		return (9);
-	if (conf->time_to_refactor < 1)
-		return (10);
-	if (conf->number_of_compiles_required < 1)
-		return (11);
-	if (conf->dongle_cooldown < 0)
-		return (12);
-	// if (conf->number_of_coders > 3000)
-		// return (18);
-	return (0);
+	else
+		ft_perror_part2(i);
 }
 
 static void	fill_targets(int **targets, t_config *conf)
@@ -80,20 +66,6 @@ static void	fill_targets(int **targets, t_config *conf)
 	targets[6] = &conf->dongle_cooldown;
 }
 
-int	full_checker(int argc, char **argv, t_config *conf)
-{
-	int	parser_valid;
-	int	config_valid;
-
-	parser_valid = parser(argc, argv, conf);
-	if (parser_valid)
-		return (parser_valid);
-	config_valid = config_validator(conf);
-	if (config_valid)
-		return (config_valid);
-	return (0);
-}
-
 int	parser(int argc, char **argv, t_config *conf)
 {
 	int	i;
@@ -102,7 +74,6 @@ int	parser(int argc, char **argv, t_config *conf)
 
 	i = 0;
 	if (argc != 9)
-		// return (1if (argc != 9)
 		return (1);
 	fill_targets(targets, conf);
 	while (++i < 8)

@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 14:45:56 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/19 17:04:35 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/23 02:53:40 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,16 +77,25 @@ int	initialize_data(t_config *conf)
 
 	valid = pthread_mutex_init(&conf->print_mutex, NULL);
 	if (valid)
-		return 21;
+		return (21);
 	valid = pthread_mutex_init(&conf->end_mutex, NULL);
 	if (valid)
-		return 21;
+		return (pthread_mutex_destroy(&conf->print_mutex), 21);
 	valid = allocate_memory(conf);
 	if (valid)
-		return (valid);
+		return (
+			pthread_mutex_destroy(&conf->print_mutex),
+			pthread_mutex_destroy(&conf->end_mutex),
+			free(conf->coders), free(conf->dongles),
+			valid
+		);
 	init_coders(conf);
 	valid = init_dongles(conf);
 	if (valid)
-		return (22);
+		return (
+			pthread_mutex_destroy(&conf->print_mutex),
+			pthread_mutex_destroy(&conf->end_mutex),
+			free(conf->coders), free(conf->dongles),
+			22);
 	return (0);
 }
