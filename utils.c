@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-wahm <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/04 00:54:21 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/09 17:47:08 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/24 11:50:17 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "codexion.h"
 
 int	ft_atoi(const char *str, int *result)
@@ -38,4 +39,33 @@ int	ft_atoi(const char *str, int *result)
 		return (4);
 	*result = number * sign;
 	return (0);
+}
+
+long	current_time(void)
+{
+	struct timeval	time;
+	long			t;
+
+	gettimeofday(&time, NULL);
+	t = time.tv_sec * 1000 + time.tv_usec / 1000;
+	return (t);
+}
+
+void	coder_state(t_coder *coder, int state)
+{
+	pthread_mutex_t	*mtx;
+
+	mtx = &coder->conf->print_mutex;
+	pthread_mutex_lock(&coder->conf->print_mutex);
+	if (!state)
+		printf("Coder %d is compiling\n", coder->id);
+	pthread_mutex_unlock(&coder->conf->print_mutex);
+	pthread_mutex_lock(&coder->conf->print_mutex);
+	if (state == 1)
+		printf("Coder %d is debugging\n", coder->id);
+	pthread_mutex_unlock(&coder->conf->print_mutex);
+	pthread_mutex_lock(&coder->conf->print_mutex);
+	if (state == 2)
+		printf("Coder %d is refactoring\n", coder->id);
+	pthread_mutex_unlock(&coder->conf->print_mutex);
 }

@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/11 11:30:41 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/21 22:12:40 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/24 11:57:19 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define CODEXION_H
 
 # include <stdlib.h>
+# include <unistd.h>
 # include <stdio.h>
 # include <string.h>
 # include <pthread.h>
@@ -66,5 +67,7 @@ int		ft_atoi(const char *str, int *result);
 void	ft_perror(int i);
 int		run_simulation(t_config *conf);
 void	clean_data(t_config *conf);
+void	coder_state(t_coder *coder, int state);
+long	current_time(void);
 
 #endif
