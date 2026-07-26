@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/11 11:30:41 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/24 11:57:19 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/26 00:21:49 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ typedef struct s_config
 	int					number_of_compiles_required;	
 	int					dongle_cooldown;	
 	int					scheduler;
+	long				start_time;
 	pthread_mutex_t		end_mutex;
 	pthread_mutex_t		print_mutex;
 	int					simulation_ends;
@@ -67,7 +68,8 @@ int		ft_atoi(const char *str, int *result);
 void	ft_perror(int i);
 int		run_simulation(t_config *conf);
 void	clean_data(t_config *conf);
-void	coder_state(t_coder *coder, int state);
 long	current_time(void);
+void	print_state(t_coder *coder, char *state);
+int		taking_dongle(t_coder *coder, t_config *conf);
 
 #endif

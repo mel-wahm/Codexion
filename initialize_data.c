@@ -6,13 +6,13 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 14:45:56 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/23 02:53:40 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/26 02:25:17 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-static	int	allocate_memory(t_config *conf)
+static int	allocate_memory(t_config *conf)
 {
 	int	n;
 
@@ -24,7 +24,7 @@ static	int	allocate_memory(t_config *conf)
 	return (0);
 }
 
-static	void	init_coders(t_config *conf)
+static void	init_coders(t_config *conf)
 {
 	int		i;
 	int		n;
@@ -45,7 +45,7 @@ static	void	init_coders(t_config *conf)
 	}
 }
 
-static	int	init_dongles(t_config *conf)
+static int	init_dongles(t_config *conf)
 {
 	t_dongle	tmp;
 	int			i;
@@ -83,19 +83,14 @@ int	initialize_data(t_config *conf)
 		return (pthread_mutex_destroy(&conf->print_mutex), 21);
 	valid = allocate_memory(conf);
 	if (valid)
-		return (
-			pthread_mutex_destroy(&conf->print_mutex),
-			pthread_mutex_destroy(&conf->end_mutex),
-			free(conf->coders), free(conf->dongles),
-			valid
-		);
+		return (pthread_mutex_destroy(&conf->print_mutex),
+			pthread_mutex_destroy(&conf->end_mutex), free(conf->coders),
+			free(conf->dongles), valid);
 	init_coders(conf);
 	valid = init_dongles(conf);
 	if (valid)
-		return (
-			pthread_mutex_destroy(&conf->print_mutex),
-			pthread_mutex_destroy(&conf->end_mutex),
-			free(conf->coders), free(conf->dongles),
-			22);
+		return (pthread_mutex_destroy(&conf->print_mutex),
+			pthread_mutex_destroy(&conf->end_mutex), free(conf->coders),
+			free(conf->dongles), 22);
 	return (0);
 }

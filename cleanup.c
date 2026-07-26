@@ -16,6 +16,7 @@ void	clean_data(t_config *conf)
 {
 	int	i;
 
+	pthread_mutex_init();
 	i = 0;
 	free(conf->coders);
 	while (i < conf->number_of_coders)

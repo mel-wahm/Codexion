@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/04 00:54:21 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/24 11:50:17 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/26 00:37:16 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,21 +51,15 @@ long	current_time(void)
 	return (t);
 }
 
-void	coder_state(t_coder *coder, int state)
+void	print_state(t_coder *coder, char *state)
 {
-	pthread_mutex_t	*mtx;
+	t_config		*conf;
+	long			time;
 
-	mtx = &coder->conf->print_mutex;
-	pthread_mutex_lock(&coder->conf->print_mutex);
-	if (!state)
-		printf("Coder %d is compiling\n", coder->id);
-	pthread_mutex_unlock(&coder->conf->print_mutex);
-	pthread_mutex_lock(&coder->conf->print_mutex);
-	if (state == 1)
-		printf("Coder %d is debugging\n", coder->id);
-	pthread_mutex_unlock(&coder->conf->print_mutex);
-	pthread_mutex_lock(&coder->conf->print_mutex);
-	if (state == 2)
-		printf("Coder %d is refactoring\n", coder->id);
-	pthread_mutex_unlock(&coder->conf->print_mutex);
+	conf = coder->conf;
+	pthread_mutex_lock(&conf->print_mutex);
+	time = current_time() - conf->start_time;
+	// exit(0);
+	printf("%ld %d %s\n", time, coder->id, state);
+	pthread_mutex_unlock(&conf->print_mutex);
 }

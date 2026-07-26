@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/07/04 01:02:58 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/24 04:00:32 by mel-wahm         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "codexion.h"
 
 int	main(int argc, char **argv)
@@ -25,6 +13,9 @@ int	main(int argc, char **argv)
 	valid = initialize_data(&conf);
 	if (valid)
 		return (ft_perror(valid), valid);
-	valid = run_simulation(&conf);
+	// valid = run_simulation(&conf);
+	conf.start_time = current_time();
+	for (int i = 0; i < conf.number_of_coders; i++)
+		taking_dongle(&conf.coders[i], &conf);
 	return (ft_perror(valid), clean_data(&conf), valid);
 }

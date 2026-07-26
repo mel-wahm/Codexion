@@ -2,7 +2,7 @@ CC = cc
 CFLAGS = -pthread
 NAME = codexion
 
-SRC = utils.c parser.c validator.c initialize_data.c main.c cleanup.c simulation.c
+SRC = utils.c parser.c validator.c initialize_data.c main.c cleanup.c simulation.c dongles.c
 
 OBJS = $(SRC:.c=.o)
 
