@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 14:45:56 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/26 02:25:17 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/27 05:17:59 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,21 @@ static int	init_dongles(t_config *conf)
 		{
 			mtx = 0;
 			while (mtx < i)
-				pthread_mutex_destroy(&conf->dongles[mtx++].available_mutex);
+			{
+				pthread_mutex_destroy(&conf->dongles[mtx].available_mutex);
+				pthread_cond_destroy(&conf->dongles[mtx++].waiters);
+			}
+			return (1);
+		}
+		mtx = pthread_cond_init(&conf->dongles[i].waiters, NULL);
+		if (mtx)
+		{
+			mtx = 0;
+			while (mtx < i)
+			{
+				pthread_mutex_destroy(&conf->dongles[mtx].available_mutex);
+				pthread_cond_destroy(&conf->dongles[mtx++].waiters);
+			}
 			return (1);
 		}
 		i++;

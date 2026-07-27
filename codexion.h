@@ -6,41 +6,42 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/11 11:30:41 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/26 00:21:49 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/27 06:15:16 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CODEXION_H
 # define CODEXION_H
 
-# include <stdlib.h>
-# include <unistd.h>
-# include <stdio.h>
-# include <string.h>
 # include <pthread.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
 # include <sys/time.h>
+# include <unistd.h>
 
 typedef struct s_config	t_config;
 
 typedef struct s_dongle
 {
-	int				id;
-	int				time_of_last_released;
-	int				is_available;
-	pthread_mutex_t	available_mutex;
-}	t_dongle;
+	int					id;
+	int					time_of_last_released;
+	int					is_available;
+	pthread_mutex_t		available_mutex;
+	pthread_cond_t		waiters;
+}						t_dongle;
 
 typedef struct s_coder
 {
-	int			id;
-	int			last_compile_time;
-	int			compile_count;
-	int			right_dongle;
-	int			left_dongle;
-	t_config	*conf;
-	pthread_t	thread;
+	int					id;
+	long				last_compile_time;
+	int					compile_count;
+	int					right_dongle;
+	int					left_dongle;
+	t_config			*conf;
+	pthread_t			thread;
 
-}	t_coder;
+}						t_coder;
 
 typedef struct s_config
 {
@@ -49,8 +50,8 @@ typedef struct s_config
 	int					time_to_compile;
 	int					time_to_debug;
 	int					time_to_refactor;
-	int					number_of_compiles_required;	
-	int					dongle_cooldown;	
+	int					number_of_compiles_required;
+	int					dongle_cooldown;
 	int					scheduler;
 	long				start_time;
 	pthread_mutex_t		end_mutex;
@@ -58,18 +59,19 @@ typedef struct s_config
 	int					simulation_ends;
 	t_coder				*coders;
 	t_dongle			*dongles;
-}	t_config;
+}						t_config;
 
-int		parser(int argc, char **argv, t_config *conf);
-int		config_validator(t_config *conf);
-int		initialize_data(t_config *conf);
-int		full_checker(int argc, char **argv, t_config *conf);
-int		ft_atoi(const char *str, int *result);
-void	ft_perror(int i);
-int		run_simulation(t_config *conf);
-void	clean_data(t_config *conf);
-long	current_time(void);
-void	print_state(t_coder *coder, char *state);
-int		taking_dongle(t_coder *coder, t_config *conf);
+int						parser(int argc, char **argv, t_config *conf);
+int						config_validator(t_config *conf);
+int						initialize_data(t_config *conf);
+int						full_checker(int argc, char **argv, t_config *conf);
+int						ft_atoi(const char *str, int *result);
+void					ft_perror(int i);
+int						run_simulation(t_config *conf);
+void					clean_data(t_config *conf);
+long					current_time(void);
+void					print_state(t_coder *coder, char *state);
+int						taking_dongle(t_coder *coder, t_dongle *dongle);
+int						dongle_logic(t_coder *coder);
 
 #endif
