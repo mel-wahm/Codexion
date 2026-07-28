@@ -6,50 +6,48 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 03:02:44 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/27 19:18:00 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/28 22:35:49 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void	release_dongle(t_dongle *dongle)
-{
-	pthread_mutex_t	*mtx;
-
-	mtx = &dongle->available_mutex;
-	pthread_mutex_lock(mtx);
-	dongle->time_of_last_released = current_time();
-	dongle->is_available = 1;
-	pthread_cond_signal(&dongle->waiters);
-	pthread_mutex_unlock(mtx);
-}
-
 void	*coder(void *args)
 {
 	t_config	*conf;
 	t_coder		*coder;
+	int			took;
 
+	took = 0;
 	coder = (t_coder *)(args);
 	conf = coder->conf;
 	if (coder->id % 2)
-		usleep(100);
-	while (!conf->simulation_ends)
+		usleep(500);
+	while (!is_sim_end(conf))
 	{
+		took = dongle_logic(coder);
+		if (took)
+			return (NULL);
+		pthread_mutex_lock(&coder->count_mutex);
 		coder->last_compile_time = current_time();
-		coder->compile_count++;
-		dongle_logic(coder);
+		pthread_mutex_unlock(&coder->count_mutex);
 		print_state(coder, "is compiling");
 		usleep(conf->time_to_compile * 1000);
 		release_dongle(&conf->dongles[coder->right_dongle]);
 		release_dongle(&conf->dongles[coder->left_dongle]);
-		if (check_ifended(conf))
+		pthread_mutex_lock(&coder->count_mutex);
+		coder->compile_count++;
+		pthread_mutex_unlock(&coder->count_mutex);
+		if (is_sim_end(conf))
 		{
 			pthread_mutex_lock(&conf->end_mutex);
 			conf->simulation_ends = 1;
 			pthread_mutex_unlock(&conf->end_mutex);
 		}
+		pthread_mutex_lock(&coder->count_mutex);
 		if (coder->compile_count == conf->number_of_compiles_required)
-			return (NULL);
+			return (pthread_mutex_unlock(&coder->count_mutex), NULL);
+		pthread_mutex_unlock(&coder->count_mutex);
 		print_state(coder, "is debugging");
 		usleep(conf->time_to_debug * 1000);
 		print_state(coder, "is refactoring");
@@ -76,6 +74,12 @@ int	run_simulation(t_config *conf)
 		if (valid)
 		{
 			valid = 14;
+			pthread_mutex_lock(&conf->end_mutex);
+			conf->simulation_ends = 1;
+			pthread_mutex_unlock(&conf->end_mutex);
+			j = 1;
+			while (j <= i)
+				pthread_cond_broadcast(&conf->dongles[coders[j++].id].waiters);
 			break ;
 		}
 		i++;

@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -pthread
+CFLAGS = -pthread -g
 NAME = codexion
 
 SRC = utils.c parser.c validator.c initialize_data.c\

@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 14:45:56 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/27 05:17:59 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/28 22:28:00 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,11 @@ static int	allocate_memory(t_config *conf)
 	return (0);
 }
 
-static void	init_coders(t_config *conf)
+static int	init_coders(t_config *conf)
 {
 	int		i;
 	int		n;
+	int		mtx;
 	t_coder	tmp;
 
 	n = conf->number_of_coders;
@@ -41,8 +42,12 @@ static void	init_coders(t_config *conf)
 		tmp.last_compile_time = 0;
 		tmp.conf = conf;
 		conf->coders[i] = tmp;
+		mtx = pthread_mutex_init(&conf->coders[i].count_mutex, NULL);
+		if (mtx)
+			return (i);
 		i++;
 	}
+	return (n);
 }
 
 static int	init_dongles(t_config *conf)
@@ -60,29 +65,13 @@ static int	init_dongles(t_config *conf)
 		conf->dongles[i] = tmp;
 		mtx = pthread_mutex_init(&conf->dongles[i].available_mutex, NULL);
 		if (mtx)
-		{
-			mtx = 0;
-			while (mtx < i)
-			{
-				pthread_mutex_destroy(&conf->dongles[mtx].available_mutex);
-				pthread_cond_destroy(&conf->dongles[mtx++].waiters);
-			}
-			return (1);
-		}
+			return (i);
 		mtx = pthread_cond_init(&conf->dongles[i].waiters, NULL);
 		if (mtx)
-		{
-			mtx = 0;
-			while (mtx < i)
-			{
-				pthread_mutex_destroy(&conf->dongles[mtx].available_mutex);
-				pthread_cond_destroy(&conf->dongles[mtx++].waiters);
-			}
-			return (1);
-		}
+			return (i);
 		i++;
 	}
-	return (0);
+	return (conf->number_of_coders);
 }
 
 int	initialize_data(t_config *conf)
@@ -92,19 +81,19 @@ int	initialize_data(t_config *conf)
 	valid = pthread_mutex_init(&conf->print_mutex, NULL);
 	if (valid)
 		return (21);
+	conf->is_print_init = 1;
 	valid = pthread_mutex_init(&conf->end_mutex, NULL);
 	if (valid)
-		return (pthread_mutex_destroy(&conf->print_mutex), 21);
+		return (21);
+	conf->is_end_init = 1;
 	valid = allocate_memory(conf);
 	if (valid)
-		return (pthread_mutex_destroy(&conf->print_mutex),
-			pthread_mutex_destroy(&conf->end_mutex), free(conf->coders),
-			free(conf->dongles), valid);
-	init_coders(conf);
-	valid = init_dongles(conf);
-	if (valid)
-		return (pthread_mutex_destroy(&conf->print_mutex),
-			pthread_mutex_destroy(&conf->end_mutex), free(conf->coders),
-			free(conf->dongles), 22);
+		return (valid);
+	conf->initialized_coders = init_coders(conf);
+	if (conf->initialized_coders < conf->number_of_coders)
+		return (22);
+	conf->initialized_dongles = init_dongles(conf);
+	if (conf->initialized_dongles < conf->number_of_coders)
+		return (22);
 	return (0);
 }

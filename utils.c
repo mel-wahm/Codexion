@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/04 00:54:21 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/26 00:37:16 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/28 17:47:33 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,12 @@ long	current_time(void)
 
 void	print_state(t_coder *coder, char *state)
 {
-	t_config		*conf;
-	long			time;
+	t_config	*conf;
+	long		time;
 
 	conf = coder->conf;
 	pthread_mutex_lock(&conf->print_mutex);
 	time = current_time() - conf->start_time;
-	// exit(0);
 	printf("%ld %d %s\n", time, coder->id, state);
 	pthread_mutex_unlock(&conf->print_mutex);
 }

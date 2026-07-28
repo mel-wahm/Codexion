@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/11 11:30:41 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/27 19:17:19 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/28 22:28:00 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,11 @@ typedef struct s_config
 	long				start_time;
 	pthread_mutex_t		end_mutex;
 	pthread_mutex_t		print_mutex;
+	int					is_print_init;
+	int					is_end_init;
 	int					simulation_ends;
+	int					initialized_coders;
+	int					initialized_dongles;
 	t_coder				*coders;
 	t_dongle			*dongles;
 }						t_config;
@@ -75,4 +79,6 @@ void					print_state(t_coder *coder, char *state);
 int						taking_dongle(t_coder *coder, t_dongle *dongle);
 int						dongle_logic(t_coder *coder);
 int						check_ifended(t_config *conf);
+int						is_sim_end(t_config *conf);
+void					release_dongle(t_dongle *dongle);
 #endif
