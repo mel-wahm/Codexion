@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/21 21:46:21 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/27 06:55:36 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/27 19:03:39 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ int	taking_dongle(t_coder *coder, t_dongle *dongle)
 		pthread_cond_wait(signal, mutex);
 	dongle->is_available = 0;
 	pthread_mutex_unlock(mutex);
+	print_state(coder, "has taken a dongle.");
 	if (conf->simulation_ends)
 		return (0);
-	print_state(coder, "has taken a dongle.");
 	return (0);
 }
 

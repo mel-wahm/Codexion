@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/11 11:30:41 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/27 06:15:16 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/27 19:17:19 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ typedef struct s_coder
 	int					right_dongle;
 	int					left_dongle;
 	t_config			*conf;
+	pthread_mutex_t		count_mutex;
 	pthread_t			thread;
 
 }						t_coder;
@@ -73,5 +74,5 @@ long					current_time(void);
 void					print_state(t_coder *coder, char *state);
 int						taking_dongle(t_coder *coder, t_dongle *dongle);
 int						dongle_logic(t_coder *coder);
-
+int						check_ifended(t_config *conf);
 #endif

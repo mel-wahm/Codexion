@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 03:02:44 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/27 06:50:28 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/27 19:18:00 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ void	*coder(void *args)
 
 	coder = (t_coder *)(args);
 	conf = coder->conf;
+	if (coder->id % 2)
+		usleep(100);
 	while (!conf->simulation_ends)
 	{
 		coder->last_compile_time = current_time();
@@ -40,12 +42,14 @@ void	*coder(void *args)
 		usleep(conf->time_to_compile * 1000);
 		release_dongle(&conf->dongles[coder->right_dongle]);
 		release_dongle(&conf->dongles[coder->left_dongle]);
-		if (coder->compile_count == conf->number_of_compiles_required)
+		if (check_ifended(conf))
 		{
 			pthread_mutex_lock(&conf->end_mutex);
 			conf->simulation_ends = 1;
 			pthread_mutex_unlock(&conf->end_mutex);
 		}
+		if (coder->compile_count == conf->number_of_compiles_required)
+			return (NULL);
 		print_state(coder, "is debugging");
 		usleep(conf->time_to_debug * 1000);
 		print_state(coder, "is refactoring");
