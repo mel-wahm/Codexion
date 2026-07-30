@@ -96,6 +96,7 @@ void					check_ifended(t_config *conf);
 int						is_sim_end(t_config *conf);
 void					release_dongle(t_dongle *dongle);
 void					ft_usleep(long time_to_sleep, t_config *conf);
+void					ft_broadcast(t_config *conf);
 void					heap_init(t_heap *heap);
 int						is_higher_priority(t_request a, t_request b,
 							int scheduler);

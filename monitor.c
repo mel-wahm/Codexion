@@ -6,7 +6,7 @@
 /*   By: mel-wahm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 18:42:45 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/30 06:39:32 by q-               ###   ########.fr       */
+/*   Updated: 2026/07/30 08:33:26 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ void	check_ifended(t_config *conf)
 {
 	int	i;
 	int	ended;
-	int	idx;
 
 	ended = 1;
 	i = 0;
@@ -43,14 +42,34 @@ void	check_ifended(t_config *conf)
 		pthread_mutex_lock(&conf->end_mutex);
 		conf->simulation_ends = 1;
 		pthread_mutex_unlock(&conf->end_mutex);
-		i = 0;
-		while (i < conf->number_of_coders)
+		ft_broadcast(conf);
+	}
+}
+
+void	check_burnout(t_config *conf)
+{
+	int		i;
+	long	last_time;
+
+	i = 0;
+	while (i < conf->number_of_coders)
+	{
+		pthread_mutex_lock(&conf->coders[i].count_mutex);
+		last_time = conf->coders[i].last_compile_time;
+		pthread_mutex_unlock(&conf->coders[i].count_mutex);
+		if (last_time + conf->time_to_burnout <= current_time())
 		{
-			idx = conf->coders[i++].right_dongle;
-			pthread_mutex_lock(&conf->dongles[idx].available_mutex);
-			pthread_cond_broadcast(&conf->dongles[idx].waiters);
-			pthread_mutex_unlock(&conf->dongles[idx].available_mutex);
+			pthread_mutex_lock(&conf->print_mutex);
+			pthread_mutex_lock(&conf->end_mutex);
+			conf->simulation_ends = 1;
+			pthread_mutex_unlock(&conf->end_mutex);
+			printf("%ld %d burned out\n", current_time() - conf->start_time,
+				conf->coders[i].id);
+			pthread_mutex_unlock(&conf->print_mutex);
+			ft_broadcast(conf);
+			break ;
 		}
+		i++;
 	}
 }
 
@@ -63,6 +82,7 @@ void	*monitor_routine(void *args)
 	{
 		usleep(500);
 		check_ifended(conf);
+		check_burnout(conf);
 		if (is_sim_end(conf))
 			break ;
 	}

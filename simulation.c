@@ -6,7 +6,7 @@
 /*   By: q- <q-@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 03:02:44 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/29 03:12:36 by q-               ###   ########.fr       */
+/*   Updated: 2026/07/30 08:12:55 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,7 @@ int	run_simulation(t_config *conf)
 	i = 0;
 	j = 0;
 	conf->start_time = current_time();
-	valid = pthread_create(&conf->monitor_thread, NULL, monitor_routine,
-			conf);
+	valid = pthread_create(&conf->monitor_thread, NULL, monitor_routine, conf);
 	if (valid)
 		return (14);
 	while (i < conf->number_of_coders)
@@ -81,16 +80,10 @@ int	run_simulation(t_config *conf)
 			pthread_mutex_lock(&conf->end_mutex);
 			conf->simulation_ends = 1;
 			pthread_mutex_unlock(&conf->end_mutex);
-			j = 0;
-			while (j < conf->number_of_coders)
-			{
-				pthread_mutex_lock(&conf->dongles[j].available_mutex);
-				pthread_cond_broadcast(&conf->dongles[j].waiters);
-				pthread_mutex_unlock(&conf->dongles[j].available_mutex);
-				j++;
-			}
+			ft_broadcast(conf);
 			break ;
 		}
+		// conf->coders[i].last_compile_time = conf->start_time;
 		i++;
 	}
 	j = 0;

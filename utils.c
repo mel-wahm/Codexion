@@ -80,3 +80,17 @@ void	ft_usleep(long time_to_sleep, t_config *conf)
 		usleep(500);
 	}
 }
+
+void	ft_broadcast(t_config *conf)
+{
+	int	i;
+
+	i = 0;
+	while (i < conf->initialized_dongles)
+	{
+		pthread_mutex_lock(&conf->dongles[i].available_mutex);
+		pthread_cond_broadcast(&conf->dongles[i].waiters);
+		pthread_mutex_unlock(&conf->dongles[i].available_mutex);
+		i++;
+	}
+}

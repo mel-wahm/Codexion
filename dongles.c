@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/21 21:46:21 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/30 04:13:30 by q-               ###   ########.fr       */
+/*   Updated: 2026/07/30 08:55:20 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,12 @@ int	dongle_logic(t_coder *coder)
 	int			took;
 
 	conf = coder->conf;
+	if (conf->number_of_coders == 1)
+	{
+		// taking_dongle(coder, &conf->dongles[1]);
+		ft_usleep(conf->time_to_burnout, conf);
+		return (1);
+	}
 	if (coder->id != conf->number_of_coders)
 	{
 		took = taking_dongle(coder, &conf->dongles[coder->left_dongle]);
