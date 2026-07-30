@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/11 11:30:41 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/30 06:17:30 by q-               ###   ########.fr       */
+/*   Updated: 2026/07/30 18:01:00 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ typedef struct s_heap
 	t_request			nodes[2];
 	int					size;
 }						t_heap;
+
 typedef struct s_dongle
 {
 	int					id;

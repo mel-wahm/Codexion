@@ -6,7 +6,7 @@
 /*   By: q- <q-@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 03:02:44 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/30 08:12:55 by q-               ###   ########.fr       */
+/*   Updated: 2026/07/30 18:11:51 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,6 @@ int	run_simulation(t_config *conf)
 			ft_broadcast(conf);
 			break ;
 		}
-		// conf->coders[i].last_compile_time = conf->start_time;
 		i++;
 	}
 	j = 0;
