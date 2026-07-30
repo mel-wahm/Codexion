@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/21 21:46:21 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/28 21:37:53 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/30 04:13:30 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	release_dongle(t_dongle *dongle)
 	pthread_mutex_lock(mtx);
 	dongle->time_of_last_released = current_time();
 	dongle->is_available = 1;
-	pthread_cond_signal(&dongle->waiters);
+	pthread_cond_broadcast(&dongle->waiters);
 	pthread_mutex_unlock(mtx);
 }
 
@@ -29,18 +29,34 @@ int	taking_dongle(t_coder *coder, t_dongle *dongle)
 	pthread_mutex_t	*mutex;
 	pthread_cond_t	*signal;
 	t_config		*conf;
+	long			passed;
+	t_request		req;
 
 	conf = coder->conf;
 	signal = &dongle->waiters;
 	mutex = &dongle->available_mutex;
 	pthread_mutex_lock(mutex);
-	while (!dongle->is_available && !(is_sim_end(conf)))
+	req.id = coder->id;
+	req.enter_time = current_time();
+	pthread_mutex_lock(&coder->count_mutex);
+	req.time_to_burnout = coder->last_compile_time + conf->time_to_burnout;
+	pthread_mutex_unlock(&coder->count_mutex);
+	heap_push(&dongle->heap, &req, conf->scheduler);
+	while ((!dongle->is_available || dongle->heap.nodes[0].id != coder->id)
+		&& !(is_sim_end(conf)))
 		pthread_cond_wait(signal, mutex);
+	if (dongle->time_of_last_released > 0)
+	{
+		passed = current_time() - dongle->time_of_last_released;
+		if (passed < conf->dongle_cooldown)
+			ft_usleep(conf->dongle_cooldown - passed, conf);
+	}
 	if (is_sim_end(conf))
 		return (pthread_mutex_unlock(mutex), 1);
+	heap_pop(&dongle->heap, conf->scheduler);
 	dongle->is_available = 0;
 	pthread_mutex_unlock(mutex);
-	print_state(coder, "has taken a dongle.");
+	print_state(coder, "has taken a dongle");
 	return (0);
 }
 

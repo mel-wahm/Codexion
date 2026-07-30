@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/04 00:54:21 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/28 17:47:33 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/30 05:56:28 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,25 @@ void	print_state(t_coder *coder, char *state)
 
 	conf = coder->conf;
 	pthread_mutex_lock(&conf->print_mutex);
+	if (is_sim_end(conf))
+	{
+		pthread_mutex_unlock(&conf->print_mutex);
+		return ;
+	}
 	time = current_time() - conf->start_time;
 	printf("%ld %d %s\n", time, coder->id, state);
 	pthread_mutex_unlock(&conf->print_mutex);
+}
+
+void	ft_usleep(long time_to_sleep, t_config *conf)
+{
+	long	start;
+
+	start = current_time();
+	while (current_time() - start < time_to_sleep)
+	{
+		if (is_sim_end(conf))
+			break ;
+		usleep(500);
+	}
 }

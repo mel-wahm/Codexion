@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/11 11:30:41 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/28 22:28:00 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/30 06:17:30 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,24 @@
 
 typedef struct s_config	t_config;
 
+typedef struct s_request
+{
+	int					id;
+	long				enter_time;
+	long				time_to_burnout;
+}						t_request;
+
+typedef struct s_heap
+{
+	t_request			nodes[2];
+	int					size;
+}						t_heap;
 typedef struct s_dongle
 {
 	int					id;
-	int					time_of_last_released;
+	long				time_of_last_released;
 	int					is_available;
+	t_heap				heap;
 	pthread_mutex_t		available_mutex;
 	pthread_cond_t		waiters;
 }						t_dongle;
@@ -64,6 +77,7 @@ typedef struct s_config
 	int					initialized_dongles;
 	t_coder				*coders;
 	t_dongle			*dongles;
+	pthread_t			monitor_thread;
 }						t_config;
 
 int						parser(int argc, char **argv, t_config *conf);
@@ -78,7 +92,16 @@ long					current_time(void);
 void					print_state(t_coder *coder, char *state);
 int						taking_dongle(t_coder *coder, t_dongle *dongle);
 int						dongle_logic(t_coder *coder);
-int						check_ifended(t_config *conf);
+void					check_ifended(t_config *conf);
 int						is_sim_end(t_config *conf);
 void					release_dongle(t_dongle *dongle);
+void					ft_usleep(long time_to_sleep, t_config *conf);
+void					heap_init(t_heap *heap);
+int						is_higher_priority(t_request a, t_request b,
+							int scheduler);
+void					heapify_up(t_heap *heap, int index, int scheduler);
+void					heapify_down(t_heap *heap, int index, int scheduler);
+void					heap_push(t_heap *heap, t_request *node, int scheduler);
+t_request				heap_pop(t_heap *heap, int scheduler);
+void					*monitor_routine(void *args);
 #endif

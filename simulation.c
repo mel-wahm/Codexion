@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   simulation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: q- <q-@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/23 03:02:44 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/28 22:35:49 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/29 03:12:36 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	*coder(void *args)
 		coder->last_compile_time = current_time();
 		pthread_mutex_unlock(&coder->count_mutex);
 		print_state(coder, "is compiling");
-		usleep(conf->time_to_compile * 1000);
+		ft_usleep(conf->time_to_compile, conf);
 		release_dongle(&conf->dongles[coder->right_dongle]);
 		release_dongle(&conf->dongles[coder->left_dongle]);
 		pthread_mutex_lock(&coder->count_mutex);
@@ -49,9 +49,9 @@ void	*coder(void *args)
 			return (pthread_mutex_unlock(&coder->count_mutex), NULL);
 		pthread_mutex_unlock(&coder->count_mutex);
 		print_state(coder, "is debugging");
-		usleep(conf->time_to_debug * 1000);
+		ft_usleep(conf->time_to_debug, conf);
 		print_state(coder, "is refactoring");
-		usleep(conf->time_to_refactor * 1000);
+		ft_usleep(conf->time_to_refactor, conf);
 	}
 	return (NULL);
 }
@@ -68,6 +68,10 @@ int	run_simulation(t_config *conf)
 	i = 0;
 	j = 0;
 	conf->start_time = current_time();
+	valid = pthread_create(&conf->monitor_thread, NULL, monitor_routine,
+			conf);
+	if (valid)
+		return (14);
 	while (i < conf->number_of_coders)
 	{
 		valid = pthread_create(&coders[i].thread, NULL, coder, &coders[i]);
@@ -77,9 +81,14 @@ int	run_simulation(t_config *conf)
 			pthread_mutex_lock(&conf->end_mutex);
 			conf->simulation_ends = 1;
 			pthread_mutex_unlock(&conf->end_mutex);
-			j = 1;
-			while (j <= i)
-				pthread_cond_broadcast(&conf->dongles[coders[j++].id].waiters);
+			j = 0;
+			while (j < conf->number_of_coders)
+			{
+				pthread_mutex_lock(&conf->dongles[j].available_mutex);
+				pthread_cond_broadcast(&conf->dongles[j].waiters);
+				pthread_mutex_unlock(&conf->dongles[j].available_mutex);
+				j++;
+			}
 			break ;
 		}
 		i++;
@@ -87,5 +96,6 @@ int	run_simulation(t_config *conf)
 	j = 0;
 	while (j < i)
 		pthread_join(coders[j++].thread, NULL);
+	pthread_join(conf->monitor_thread, NULL);
 	return (valid);
 }

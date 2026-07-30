@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initialize_data.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
+/*   By: q- <q-@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/14 14:45:56 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/28 22:28:00 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/30 05:51:12 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static int	init_coders(t_config *conf)
 		tmp.left_dongle = i;
 		tmp.right_dongle = (i + 1) % n;
 		tmp.compile_count = 0;
-		tmp.last_compile_time = 0;
+		tmp.last_compile_time = current_time();
 		tmp.conf = conf;
 		conf->coders[i] = tmp;
 		mtx = pthread_mutex_init(&conf->coders[i].count_mutex, NULL);
@@ -62,13 +62,15 @@ static int	init_dongles(t_config *conf)
 		tmp.id = i;
 		tmp.is_available = 1;
 		tmp.time_of_last_released = 0;
+		heap_init(&tmp.heap);
 		conf->dongles[i] = tmp;
 		mtx = pthread_mutex_init(&conf->dongles[i].available_mutex, NULL);
 		if (mtx)
 			return (i);
 		mtx = pthread_cond_init(&conf->dongles[i].waiters, NULL);
 		if (mtx)
-			return (i);
+			return (pthread_mutex_destroy(&conf->dongles[i].available_mutex),
+				i);
 		i++;
 	}
 	return (conf->number_of_coders);

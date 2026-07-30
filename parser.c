@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/10 22:01:49 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/23 16:27:17 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/30 02:59:39 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,21 @@ static void	ft_perror_part2(int i)
 	else if (i == 12)
 		fprintf(stderr, "Error: dongle cooldown should not be negative.\n");
 	else if (i == 14)
-		fprintf(stderr, "Error: Too many coders, couldnt create all threads.\n");
+		fprintf(stderr, "Error: Couldnt create all threads.\n");
 	else if (i == 18)
 		fprintf(stderr, "Error: Max number of coders exceeded (3000).\n");
 	else if (i == 21)
 		fprintf(stderr, "Error: Initializing global mutexes failed.\n");
+	else if (i == 22)
+		fprintf(stderr, "Error: Initializing coders or dongles failed.\n");
 	else if (i == 16)
 		fprintf(stderr, "Allocation Error!\n");
 }
 
 void	ft_perror(int i)
 {
+	if (i == 0)
+		return ;
 	if (i == 1)
 		fprintf(stderr, "Error: expected exactly 8 arguments.\n");
 	else if (i == 2)
