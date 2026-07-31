@@ -1,20 +1,20 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread -g -ISrc
+CFLAGS = -Wall -Wextra -Werror -pthread -g -ISRC
 NAME = codexion
 
-SRC = Src/utils.c \
-      Src/parser.c \
-      Src/validator.c \
-      Src/initialize_data.c \
-      Src/main.c \
-      Src/cleanup.c \
-      Src/simulation.c \
-      Src/simulation_utils.c \
-      Src/dongles.c \
-      Src/dongle_utils.c \
-      Src/monitor.c \
-      Src/heap_queue.c \
-      Src/heap_utils.c
+SRC = SRC/utils.c \
+      SRC/parser.c \
+      SRC/validator.c \
+      SRC/initialize_data.c \
+      SRC/main.c \
+      SRC/cleanup.c \
+      SRC/simulation.c \
+      SRC/simulation_utils.c \
+      SRC/dongles.c \
+      SRC/dongle_utils.c \
+      SRC/monitor.c \
+      SRC/heap_queue.c \
+      SRC/heap_utils.c
 
 OBJS = $(SRC:.c=.o)
 
