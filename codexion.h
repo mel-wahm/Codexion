@@ -104,6 +104,7 @@ int						is_sim_end(t_config *conf);
 void					release_dongle(t_dongle *dongle);
 void					push_request(t_coder *coder, t_dongle *dongle,
 							t_request *req);
+void					prepare_and_push_requests(t_coder *coder);
 void					handle_cooldown(t_coder *coder, t_dongle *dongle);
 void					ft_usleep(long time_to_sleep, t_config *conf);
 void					ft_broadcast(t_config *conf);

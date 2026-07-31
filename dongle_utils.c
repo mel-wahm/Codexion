@@ -6,7 +6,7 @@
 /*   By: q- <marvin@42.fr>                          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/31 06:43:24 by q-                #+#    #+#             */
-/*   Updated: 2026/07/31 06:43:27 by q-               ###   ########.fr       */
+/*   Updated: 2026/07/31 08:05:30 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,19 @@ void	handle_cooldown(t_coder *coder, t_dongle *dongle)
 		if (passed < coder->conf->dongle_cooldown)
 			ft_usleep(coder->conf->dongle_cooldown - passed, coder->conf);
 	}
+}
+
+void	prepare_and_push_requests(t_coder *coder)
+{
+	t_config	*conf;
+	t_request	req;
+
+	conf = coder->conf;
+	req.id = coder->id;
+	req.enter_time = current_time();
+	pthread_mutex_lock(&coder->count_mutex);
+	req.time_to_burnout = coder->last_compile_time + conf->time_to_burnout;
+	pthread_mutex_unlock(&coder->count_mutex);
+	push_request(coder, &conf->dongles[coder->left_dongle], &req);
+	push_request(coder, &conf->dongles[coder->right_dongle], &req);
 }

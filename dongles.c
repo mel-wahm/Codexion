@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/21 21:46:21 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/31 06:48:42 by q-               ###   ########.fr       */
+/*   Updated: 2026/07/31 08:05:30 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,40 +33,22 @@ int	taking_dongle(t_coder *coder, t_dongle *dongle)
 
 int	dongle_logic(t_coder *coder)
 {
-	t_config	*conf;
-	t_request	req;
-	int			took;
+	int	first;
+	int	second;
 
-	conf = coder->conf;
-	if (conf->number_of_coders == 1)
+	if (coder->conf->number_of_coders == 1)
+		return (ft_usleep(coder->conf->time_to_burnout, coder->conf), 1);
+	prepare_and_push_requests(coder);
+	first = coder->left_dongle;
+	second = coder->right_dongle;
+	if (coder->id % 2 == 0)
 	{
-		ft_usleep(conf->time_to_burnout, conf);
+		first = coder->right_dongle;
+		second = coder->left_dongle;
+	}
+	if (taking_dongle(coder, &coder->conf->dongles[first]))
 		return (1);
-	}
-	req.id = coder->id;
-	req.enter_time = current_time();
-	pthread_mutex_lock(&coder->count_mutex);
-	req.time_to_burnout = coder->last_compile_time + conf->time_to_burnout;
-	pthread_mutex_unlock(&coder->count_mutex);
-	push_request(coder, &conf->dongles[coder->left_dongle], &req);
-	push_request(coder, &conf->dongles[coder->right_dongle], &req);
-	if (coder->id % 2)
-	{
-		took = taking_dongle(coder, &conf->dongles[coder->left_dongle]);
-		if (took)
-			return (1);
-		took = taking_dongle(coder, &conf->dongles[coder->right_dongle]);
-		if (took)
-			return (release_dongle(&conf->dongles[coder->left_dongle]), 1);
-	}
-	else
-	{
-		took = taking_dongle(coder, &conf->dongles[coder->right_dongle]);
-		if (took)
-			return (1);
-		took = taking_dongle(coder, &conf->dongles[coder->left_dongle]);
-		if (took)
-			return (release_dongle(&conf->dongles[coder->right_dongle]), 1);
-	}
+	if (taking_dongle(coder, &coder->conf->dongles[second]))
+		return (release_dongle(&coder->conf->dongles[first]), 1);
 	return (0);
 }
