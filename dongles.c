@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/21 21:46:21 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/31 06:33:00 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/31 06:48:42 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	dongle_logic(t_coder *coder)
 	pthread_mutex_unlock(&coder->count_mutex);
 	push_request(coder, &conf->dongles[coder->left_dongle], &req);
 	push_request(coder, &conf->dongles[coder->right_dongle], &req);
-	if (coder->id != conf->number_of_coders)
+	if (coder->id % 2)
 	{
 		took = taking_dongle(coder, &conf->dongles[coder->left_dongle]);
 		if (took)
