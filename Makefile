@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread -g -ISRC
+CFLAGS = -Wall -Wextra -Werror -pthread
 NAME = codexion
 
 SRC = SRC/utils.c \
@@ -30,7 +30,5 @@ fclean: clean
 	@rm -f $(NAME)
 
 re: fclean all
-
-it: all clean
 
 .PHONY: all clean fclean re
