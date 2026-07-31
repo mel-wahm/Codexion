@@ -6,7 +6,7 @@
 /*   By: mel-wahm <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/27 18:42:45 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/30 08:33:26 by q-               ###   ########.fr       */
+/*   Updated: 2026/07/31 06:04:49 by q-               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void	check_ifended(t_config *conf)
 		pthread_mutex_lock(&conf->end_mutex);
 		conf->simulation_ends = 1;
 		pthread_mutex_unlock(&conf->end_mutex);
-		ft_broadcast(conf);
 	}
 }
 
@@ -50,14 +49,17 @@ void	check_burnout(t_config *conf)
 {
 	int		i;
 	long	last_time;
+	int		count;
 
 	i = 0;
 	while (i < conf->number_of_coders)
 	{
 		pthread_mutex_lock(&conf->coders[i].count_mutex);
 		last_time = conf->coders[i].last_compile_time;
+		count = conf->coders[i].compile_count;
 		pthread_mutex_unlock(&conf->coders[i].count_mutex);
-		if (last_time + conf->time_to_burnout <= current_time())
+		if (count < conf->number_of_compiles_required && last_time
+			+ conf->time_to_burnout <= current_time())
 		{
 			pthread_mutex_lock(&conf->print_mutex);
 			pthread_mutex_lock(&conf->end_mutex);
@@ -66,7 +68,6 @@ void	check_burnout(t_config *conf)
 			printf("%ld %d burned out\n", current_time() - conf->start_time,
 				conf->coders[i].id);
 			pthread_mutex_unlock(&conf->print_mutex);
-			ft_broadcast(conf);
 			break ;
 		}
 		i++;
@@ -84,7 +85,10 @@ void	*monitor_routine(void *args)
 		check_ifended(conf);
 		check_burnout(conf);
 		if (is_sim_end(conf))
+		{
+			ft_broadcast(conf);
 			break ;
+		}
 	}
 	return (NULL);
 }

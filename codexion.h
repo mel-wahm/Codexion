@@ -6,7 +6,7 @@
 /*   By: mel-wahm <mel-wahm@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/07/11 11:30:41 by mel-wahm          #+#    #+#             */
-/*   Updated: 2026/07/30 18:01:00 by mel-wahm         ###   ########.fr       */
+/*   Updated: 2026/07/31 06:33:00 by mel-wahm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,9 @@ int						dongle_logic(t_coder *coder);
 void					check_ifended(t_config *conf);
 int						is_sim_end(t_config *conf);
 void					release_dongle(t_dongle *dongle);
+void					push_request(t_coder *coder, t_dongle *dongle,
+							t_request *req);
+void					handle_cooldown(t_coder *coder, t_dongle *dongle);
 void					ft_usleep(long time_to_sleep, t_config *conf);
 void					ft_broadcast(t_config *conf);
 void					heap_init(t_heap *heap);

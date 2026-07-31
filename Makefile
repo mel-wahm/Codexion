@@ -3,7 +3,7 @@ CFLAGS = -pthread -g
 NAME = codexion
 
 SRC = utils.c parser.c validator.c initialize_data.c\
-	  main.c cleanup.c simulation.c dongles.c monitor.c heap_queue.c heap_utils.c
+	  main.c cleanup.c simulation.c dongles.c dongle_utils.c monitor.c heap_queue.c heap_utils.c
 
 OBJS = $(SRC:.c=.o)
 
