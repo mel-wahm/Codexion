@@ -1,9 +1,20 @@
 CC = cc
-CFLAGS = -pthread -g
+CFLAGS = -Wall -Wextra -Werror -pthread -g -ISrc
 NAME = codexion
 
-SRC = utils.c parser.c validator.c initialize_data.c\
-	  main.c cleanup.c simulation.c simulation_utils.c dongles.c dongle_utils.c monitor.c heap_queue.c heap_utils.c
+SRC = Src/utils.c \
+      Src/parser.c \
+      Src/validator.c \
+      Src/initialize_data.c \
+      Src/main.c \
+      Src/cleanup.c \
+      Src/simulation.c \
+      Src/simulation_utils.c \
+      Src/dongles.c \
+      Src/dongle_utils.c \
+      Src/monitor.c \
+      Src/heap_queue.c \
+      Src/heap_utils.c
 
 OBJS = $(SRC:.c=.o)
 
@@ -20,6 +31,6 @@ fclean: clean
 
 re: fclean all
 
-it:	all clean
+it: all clean
 
 .PHONY: all clean fclean re
